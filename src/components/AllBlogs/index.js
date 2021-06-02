@@ -8,12 +8,11 @@ const AllBlogs = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const auth = useSelector((state) => state.auth);
   const blogs = useSelector((state) => state.blog.blogs);
   const dispatch = useDispatch();
 
   const fetchAllBlogs = async () => {
-    dispatch(fetchBlogsAsync(auth.token)).then(() => {
+    dispatch(fetchBlogsAsync(localStorage.getItem('token'))).then(() => {
       setLoading(false);
       console.log(blogs)
     })

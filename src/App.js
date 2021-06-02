@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   BrowserRouter as Router,
@@ -14,10 +14,19 @@ import HomePage from "./containers/HomePage";
 
 function App() {
   const auth = useSelector((state) => state.auth);
+  const [token, setToken] = useState();
 
   // if (!auth.token) {
   //   return <HomePage />;
   // }
+
+  useEffect(() => {
+    setToken(localStorage.getItem('token'));
+  }, [auth])
+
+  if(!token){
+    return <HomePage />
+  }
 
   return (
     <div className="">
@@ -31,6 +40,7 @@ function App() {
             path="/allblogs"
             component={AllBlogsPage}
             auth={auth}
+            token={token}
           />
           <Route path="">
             <Redirect to="/allblogs" />

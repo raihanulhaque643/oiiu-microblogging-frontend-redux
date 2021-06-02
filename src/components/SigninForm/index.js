@@ -31,7 +31,8 @@ const SigninForm = () => {
           return errors;
         }}
         onSubmit={(values, { setSubmitting }) => {
-          dispatch(signInAsync(values)).then(() => {
+          dispatch(signInAsync(values)).then((res) => {
+            // localStorage.setItem('token', res.payload.token);
             history.push('/allblogs');
           });
         }}
