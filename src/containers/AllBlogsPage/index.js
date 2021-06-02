@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router";
 import AllBlogs from "../../components/AllBlogs";
 import CreateBlogForm from "../../components/CreateBlogForm";
 
 const AllBlogsPage = () => {
+  const history = useHistory();
   return (
     <div className="">
       <div className="flex flex-row items-center justify-between">
@@ -10,6 +12,7 @@ const AllBlogsPage = () => {
         <button
           onClick={() => {
             localStorage.clear();
+            history.push('/')
           }}
           className="bg-red-400 p-2 m-2 rounded"
         >
