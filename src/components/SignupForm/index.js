@@ -1,35 +1,14 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import axios from "axios";
+import { signUpAsync } from "../../features/auth/authSlice";
+import { useDispatch } from "react-redux";
 
 const SignupForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async ({ firstName, lastName, email, password }) => {
-    try {
-      const response = await axios({
-        method: "post",
-        url: "https://oiiu-backend.herokuapp.com/oiiu/signup",
-        data: {
-          firstName,
-          lastName,
-          email,
-          password,
-        },
-      });
-      console.log(response);
-      setSuccessMessage(response.data.message);
-      setErrorMessage("");
-      setLoading(false);
-    } catch (e) {
-      console.log(e.response);
-      setErrorMessage(e.response.data.message);
-      setSuccessMessage("");
-      setLoading(false);
-    }
-  };
+  const dispatch = useDispatch();
 
   return (
     <div className="bg-white p-4 m-4 flex flex-col w-80">
@@ -74,13 +53,9 @@ const SignupForm = () => {
           return errors;
         }}
         onSubmit={(values, { setSubmitting }) => {
-          setLoading(true);
-          handleSignUp(values);
-          values.firstName = "";
-          values.lastName = "";
-          values.email = "";
-          values.password = "";
-          values.confirmPassword = "";
+          dispatch(signUpAsync(values)).then(() => {
+            setSuccessMessage('Signup success! Proceed to login.')
+          });
         }}
       >
         {({ isSubmitting }) => (

@@ -32,7 +32,7 @@ const SigninForm = () => {
         }}
         onSubmit={(values, { setSubmitting }) => {
           dispatch(signInAsync(values)).then(() => {
-            history.push('/allblogs')
+            history.push('/allblogs');
           });
         }}
       >

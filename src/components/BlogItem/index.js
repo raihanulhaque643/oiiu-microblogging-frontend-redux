@@ -1,11 +1,13 @@
 import React from 'react'
+import { useSelector } from 'react-redux';
 
 const BlogItem = ({ _id, description, owner, likes }) => {
+  const auth = useSelector((state) => state.auth);
 
     const handleLike = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         console.log({
-            myId: user._id
+            myId: auth.user._id
         })
         console.log({
             itemId: _id

@@ -36,6 +36,32 @@ export const signInAsync = createAsyncThunk(
   }
 );
 
+export const signUpAsync = createAsyncThunk(
+  'auth/signup',
+  async (values) => {
+    console.log(values.email)
+    console.log(values.password)
+    let response;
+    try {
+       response = await axios({
+        method: "post",
+        url: "https://oiiu-backend.herokuapp.com/oiiu/signup",
+        data: {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          email: values.email,
+          password: values.password,
+        },
+        headers: {"Access-Control-Allow-Origin": "*"}
+      });
+      console.log(response);
+    } catch (e) {
+      console.log({ e });
+    }
+    return response.data;
+  }
+);
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
