@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const CreateBlogForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const auth = useSelector((state) => state.auth);
+  let firstName = auth.user.firstName;
 
   // const firstName = localStorage.getItem('user').firstName;
 
@@ -32,7 +36,7 @@ const CreateBlogForm = () => {
 
   return (
     <div className="bg-white p-4 m-4 flex flex-col w-full md:w-6/12">
-      <div className="text-3xl text-gray-500 mb-4 font-semibold">Hi <br/> Write a post...</div>
+      <div className="text-3xl text-gray-500 mb-4 font-semibold">Hi {firstName && `${firstName},`} <br/> Write a post...</div>
       <Formik
         initialValues={{ description: "" }}
         validate={(values) => {

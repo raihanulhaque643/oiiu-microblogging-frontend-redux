@@ -30,7 +30,7 @@ function App() {
 
   return (
     <div className="">
-      <Router>
+      {/* <Router> */}
         <Switch>
         <Route exact path="/">
           <HomePage />
@@ -46,7 +46,7 @@ function App() {
             <Redirect to="/allblogs" />
           </Route>
         </Switch>
-      </Router>
+      {/* </Router> */}
     </div>
   );
 }

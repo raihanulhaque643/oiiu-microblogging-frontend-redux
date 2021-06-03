@@ -29,7 +29,7 @@ export const signInAsync = createAsyncThunk(
         headers: {"Access-Control-Allow-Origin": "*"}
       });
       console.log(response);
-      localStorage.setItem('token', response.payload.token);
+      localStorage.setItem('token', response.data.token);
     } catch (e) {
       console.log({ e });
     }
