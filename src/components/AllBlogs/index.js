@@ -14,7 +14,6 @@ const AllBlogs = () => {
   const fetchAllBlogs = async () => {
     dispatch(fetchBlogsAsync(localStorage.getItem('token'))).then(() => {
       setLoading(false);
-      console.log(blogs)
     })
   };
 

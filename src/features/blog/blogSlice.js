@@ -12,7 +12,6 @@ const initialState = {
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
 export const fetchBlogsAsync = createAsyncThunk("blog/fetch", async (token) => {
-    console.log(token)
   let response;
   try {
     response = await axios({
@@ -23,11 +22,32 @@ export const fetchBlogsAsync = createAsyncThunk("blog/fetch", async (token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
   } catch (e) {
     console.log({ e });
   }
   return response.data;
+});
+
+export const createBlogAsync = createAsyncThunk("blog/create", async (values) => {
+  console.log(values.description);
+let response;
+try {
+  response = await axios({
+    method: "post",
+    url: "https://oiiu-backend.herokuapp.com/oiiu/create/blogpost",
+    data: {
+      description: values.description
+    },
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+  console.log(response);
+} catch (e) {
+  console.log({ e });
+}
+return response.data;
 });
 
 export const blogSlice = createSlice({
@@ -60,6 +80,13 @@ export const blogSlice = createSlice({
       .addCase(fetchBlogsAsync.fulfilled, (state, action) => {
         state.status = "fullfilled";
         state.blogs = action.payload;
+      })
+      .addCase(createBlogAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(createBlogAsync.fulfilled, (state, action) => {
+        state.status = "fullfilled";
+        state.blogs = [action.payload, ...state.blogs];
       });
   },
 });

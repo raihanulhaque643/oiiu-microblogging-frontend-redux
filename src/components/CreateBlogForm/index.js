@@ -1,38 +1,41 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { createBlogAsync, fetchBlogsAsync } from "../../features/blog/blogSlice";
 
 const CreateBlogForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const auth = useSelector((state) => state.auth);
-  let firstName = auth.user.firstName;
+  let firstName = JSON.parse(localStorage.getItem('user')).firstName;
+
+  const dispatch = useDispatch();
 
   // const firstName = localStorage.getItem('user').firstName;
 
-  const handlePost = async ({ description }) => {
-    try {
-      const response = await axios({
-        method: "post",
-        url: "https://oiiu-backend.herokuapp.com/oiiu/create/blogpost",
-        data: {
-          description
-        },
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      console.log(response);
-      setLoading(false);
-      setErrorMessage("");
-    } catch (e) {
-      console.log({ e });
-      setLoading(false);
-      setErrorMessage(e.response.data.message);
-    }
-  };
+  // const handlePost = async ({ description }) => {
+  //   try {
+  //     const response = await axios({
+  //       method: "post",
+  //       url: "https://oiiu-backend.herokuapp.com/oiiu/create/blogpost",
+  //       data: {
+  //         description
+  //       },
+  //       headers: {
+  //           'Authorization': `Bearer ${localStorage.getItem('token')}`
+  //       }
+  //     });
+  //     console.log(response);
+  //     setLoading(false);
+  //     setErrorMessage("");
+  //   } catch (e) {
+  //     console.log({ e });
+  //     setLoading(false);
+  //     setErrorMessage(e.response.data.message);
+  //   }
+  // };
 
   return (
     <div className="bg-white p-4 m-4 flex flex-col w-full md:w-6/12">
@@ -47,10 +50,7 @@ const CreateBlogForm = () => {
           return errors;
         }}
         onSubmit={(values, { setSubmitting }) => {
-          setLoading(true);
-          handlePost(values);
-          setSubmitting(false);
-          values.description('');
+          dispatch(createBlogAsync(values));
         }}
       >
         {({ isSubmitting }) => (
