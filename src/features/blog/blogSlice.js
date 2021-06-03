@@ -50,6 +50,25 @@ try {
 return response.data;
 });
 
+export const deleteBlogAsync = createAsyncThunk("blog/delete", async ({blogId, userId}) => {
+  console.log(userId, blogId);
+let response;
+try {
+  response = await axios({
+    method: "delete",
+    url: `https://oiiu-backend.herokuapp.com/oiiu/delete/blogpost/${blogId}`,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+  console.log(response);
+} catch (e) {
+  console.log({ e });
+}
+return response.data;
+});
+
 export const blogSlice = createSlice({
   name: "blog",
   initialState,
@@ -87,6 +106,15 @@ export const blogSlice = createSlice({
       .addCase(createBlogAsync.fulfilled, (state, action) => {
         state.status = "fullfilled";
         state.blogs = [action.payload, ...state.blogs];
+      })
+      .addCase(deleteBlogAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteBlogAsync.fulfilled, (state, action) => {
+        state.status = "fullfilled";
+        state.blogs = state.blogs.filter((item, index) => {
+          return item._id !== action.payload._id
+        })
       });
   },
 });
