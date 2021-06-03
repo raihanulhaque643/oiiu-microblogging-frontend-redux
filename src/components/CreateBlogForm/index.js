@@ -5,37 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { createBlogAsync, fetchBlogsAsync } from "../../features/blog/blogSlice";
 
 const CreateBlogForm = () => {
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const createBlogStatus = useSelector((state) => state.blog.createBlogStatus);
 
   const auth = useSelector((state) => state.auth);
   let firstName = JSON.parse(localStorage.getItem('user')).firstName;
 
   const dispatch = useDispatch();
-
-  // const firstName = localStorage.getItem('user').firstName;
-
-  // const handlePost = async ({ description }) => {
-  //   try {
-  //     const response = await axios({
-  //       method: "post",
-  //       url: "https://oiiu-backend.herokuapp.com/oiiu/create/blogpost",
-  //       data: {
-  //         description
-  //       },
-  //       headers: {
-  //           'Authorization': `Bearer ${localStorage.getItem('token')}`
-  //       }
-  //     });
-  //     console.log(response);
-  //     setLoading(false);
-  //     setErrorMessage("");
-  //   } catch (e) {
-  //     console.log({ e });
-  //     setLoading(false);
-  //     setErrorMessage(e.response.data.message);
-  //   }
-  // };
 
   return (
     <div className="bg-white p-4 m-4 flex flex-col w-full md:w-6/12">
@@ -52,6 +27,7 @@ const CreateBlogForm = () => {
         onSubmit={(values, { setSubmitting }) => {
           dispatch(createBlogAsync(values)).then((res) => {
             dispatch(fetchBlogsAsync(localStorage.getItem('token')));
+            setSubmitting(false);
           });
         }}
       >
@@ -69,21 +45,27 @@ const CreateBlogForm = () => {
               component="div"
             />
 
-            {errorMessage && (
-              <div className="ml-4 my-2 text-md text-red-500 font-bold">
-                {errorMessage}
-              </div>
-            )}
-
             <button
-              className={`m-2 p-2 border bg-indigo-500 text-white font-semibold ${
-                loading ? "animate-pulse" : ""
-              }`}
+              className="m-2 p-2 border bg-indigo-500 text-white font-semibold"
               type="submit"
               disabled={isSubmitting}
             >
               Post
             </button>
+
+            {
+              createBlogStatus === 'loading' &&
+              <div className="ml-4 mb-4 text-sm text-green-500 font-bold">Processing...Please wait...</div>
+            }
+            {
+              createBlogStatus === 'fulfilled' &&
+              <div className="ml-4 mb-4 text-sm text-green-500 font-bold">Successfully posted...</div>
+            }
+            {
+              createBlogStatus === 'rejected' &&
+              <div className="ml-4 mb-4 text-sm text-red-500 font-bold">Failed to submit...</div>
+            }
+
           </Form>
         )}
       </Formik>
