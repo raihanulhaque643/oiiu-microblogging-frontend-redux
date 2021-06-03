@@ -1,26 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteBlogAsync } from "../../features/blog/blogSlice";
+import { deleteBlogAsync, fetchBlogsAsync, likeBlogAsync } from "../../features/blog/blogSlice";
 
 const BlogItem = ({ _id, description, owner, likes }) => {
   const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [liked, setLiked] = useState(false);
 
-  const handleLike = () => {
-    // const user = JSON.parse(localStorage.getItem('user'));
-    console.log({
-      myId: auth.user._id,
-    });
-    console.log({
-      itemId: _id,
+  const handleLike = (blogId, userId) => {
+    const data = { userId, blogId };
+    dispatch(likeBlogAsync(data)).then((res) => {
+      dispatch(fetchBlogsAsync(localStorage.getItem('token')))
     });
   };
 
   const handleDelete = (blogId, userId) => {
-    const data = {userId, blogId}
-    dispatch(deleteBlogAsync(data))
-  }
+    const data = { userId, blogId };
+    dispatch(deleteBlogAsync(data));
+  };
+
+  useEffect(() => {
+    if(likes.includes(user._id)){
+      setLiked(true)
+    } else {
+      setLiked(false)
+    }
+  }, [likes, user._id])
 
   return (
     <div className="border my-2 p-2">
@@ -31,8 +36,10 @@ const BlogItem = ({ _id, description, owner, likes }) => {
         <div className="flex flex-row px-4">{description}</div>
         <div className="flex flex-row">
           <button
-            onClick={handleLike}
-            className="mx-4 p-2 border border-indigo-700 rounded"
+            onClick={() => {
+              handleLike(_id, owner._id);
+            }}
+            className={`mx-4 p-2 border border-indigo-700 rounded ${liked ? "bg-blue-200" : "bg-white"} `}
           >
             Like
           </button>
@@ -41,7 +48,9 @@ const BlogItem = ({ _id, description, owner, likes }) => {
           </div>
           {user._id === owner._id && (
             <button
-              onClick={() => {handleDelete(_id, owner._id)}}
+              onClick={() => {
+                handleDelete(_id, owner._id);
+              }}
               className="mx-4 p-2 border-2 border-red-700 rounded"
             >
               Delete

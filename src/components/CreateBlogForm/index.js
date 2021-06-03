@@ -50,7 +50,9 @@ const CreateBlogForm = () => {
           return errors;
         }}
         onSubmit={(values, { setSubmitting }) => {
-          dispatch(createBlogAsync(values));
+          dispatch(createBlogAsync(values)).then((res) => {
+            dispatch(fetchBlogsAsync(localStorage.getItem('token')));
+          });
         }}
       >
         {({ isSubmitting }) => (

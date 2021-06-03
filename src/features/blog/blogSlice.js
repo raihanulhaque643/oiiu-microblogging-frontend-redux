@@ -3,7 +3,7 @@ import axios from "axios";
 
 const initialState = {
   blogs: [],
-  status: ''
+  status: "",
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -28,46 +28,68 @@ export const fetchBlogsAsync = createAsyncThunk("blog/fetch", async (token) => {
   return response.data;
 });
 
-export const createBlogAsync = createAsyncThunk("blog/create", async (values) => {
-  console.log(values.description);
-let response;
-try {
-  response = await axios({
-    method: "post",
-    url: "https://oiiu-backend.herokuapp.com/oiiu/create/blogpost",
-    data: {
-      description: values.description
-    },
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
-  console.log(response);
-} catch (e) {
-  console.log({ e });
-}
-return response.data;
-});
+export const createBlogAsync = createAsyncThunk(
+  "blog/create",
+  async (values) => {
+    let response;
+    try {
+      response = await axios({
+        method: "post",
+        url: "https://oiiu-backend.herokuapp.com/oiiu/create/blogpost",
+        data: {
+          description: values.description,
+        },
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+    } catch (e) {
+      console.log({ e });
+    }
+    return response.data;
+  }
+);
 
-export const deleteBlogAsync = createAsyncThunk("blog/delete", async ({blogId, userId}) => {
-  console.log(userId, blogId);
-let response;
-try {
-  response = await axios({
-    method: "delete",
-    url: `https://oiiu-backend.herokuapp.com/oiiu/delete/blogpost/${blogId}`,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
-  console.log(response);
-} catch (e) {
-  console.log({ e });
-}
-return response.data;
-});
+export const deleteBlogAsync = createAsyncThunk(
+  "blog/delete",
+  async ({ blogId, userId }) => {
+    let response;
+    try {
+      response = await axios({
+        method: "delete",
+        url: `https://oiiu-backend.herokuapp.com/oiiu/delete/blogpost/${blogId}`,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+    } catch (e) {
+      console.log({ e });
+    }
+    return response.data;
+  }
+);
+
+export const likeBlogAsync = createAsyncThunk(
+  "blog/like",
+  async ({ blogId, userId }) => {
+    let response;
+    try {
+      response = await axios({
+        method: "patch",
+        url: `https://oiiu-backend.herokuapp.com/oiiu/react/blogpost/${blogId}`,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+    } catch (e) {
+      console.log({ e });
+    }
+    return response.data;
+  }
+);
 
 export const blogSlice = createSlice({
   name: "blog",
@@ -105,7 +127,7 @@ export const blogSlice = createSlice({
       })
       .addCase(createBlogAsync.fulfilled, (state, action) => {
         state.status = "fullfilled";
-        state.blogs = [action.payload, ...state.blogs];
+        // state.blogs = [action.payload, ...state.blogs];
       })
       .addCase(deleteBlogAsync.pending, (state) => {
         state.status = "loading";
@@ -113,8 +135,17 @@ export const blogSlice = createSlice({
       .addCase(deleteBlogAsync.fulfilled, (state, action) => {
         state.status = "fullfilled";
         state.blogs = state.blogs.filter((item, index) => {
-          return item._id !== action.payload._id
-        })
+          return item._id !== action.payload._id;
+        });
+      })
+      .addCase(likeBlogAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(likeBlogAsync.fulfilled, (state, action) => {
+        state.status = "fullfilled";
+        // state.blogs = state.blogs.filter((item, index) => {
+        //   return item._id !== action.payload._id;
+        // });
       });
   },
 });
