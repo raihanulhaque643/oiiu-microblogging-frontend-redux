@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { signInAsync } from "../../features/auth/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 
 const SigninForm = () => {
+
+  const signInStatus = useSelector((state) => state.auth.signInStatus);
 
   const history = useHistory();
 
@@ -34,6 +36,7 @@ const SigninForm = () => {
           dispatch(signInAsync(values)).then((res) => {
             // localStorage.setItem('token', res.payload.token);
             history.push('/allblogs');
+            setSubmitting(false);
           });
         }}
       >
@@ -69,6 +72,14 @@ const SigninForm = () => {
             >
               Signin
             </button>
+            {
+              signInStatus === 'loading' &&
+              <div className="ml-4 mb-4 text-sm text-green-500 font-bold">Processing...Please wait...</div>
+            }
+            {
+              signInStatus === 'rejected' &&
+              <div className="ml-4 mb-4 text-sm text-red-500 font-bold">Login failed...</div>
+            }
           </Form>
         )}
       </Formik>

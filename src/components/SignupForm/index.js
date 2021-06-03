@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { signUpAsync } from "../../features/auth/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const SignupForm = () => {
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
+
+  const signUpStatus = useSelector((state) => state.auth.signUpStatus);
 
   return (
     <div className="bg-white p-4 m-4 flex flex-col w-80">
@@ -53,9 +53,8 @@ const SignupForm = () => {
           return errors;
         }}
         onSubmit={(values, { setSubmitting }) => {
-          dispatch(signUpAsync(values)).then(() => {
-            setSuccessMessage('Signup success! Proceed to login.')
-          });
+          dispatch(signUpAsync(values));
+            setSubmitting(false);
         }}
       >
         {({ isSubmitting }) => (
@@ -116,18 +115,6 @@ const SignupForm = () => {
               component="div"
             />
 
-            {errorMessage && (
-              <div className="ml-4 my-2 text-md text-red-500 font-bold">
-                {errorMessage}
-              </div>
-            )}
-
-            {successMessage && (
-              <div className="ml-4 my-2 text-md text-green-500 font-bold">
-                {successMessage}
-              </div>
-            )}
-
             <button
               className={`m-2 p-2 border bg-indigo-500 text-white font-semibold ${
                 loading ? "animate-pulse" : ""
@@ -137,6 +124,18 @@ const SignupForm = () => {
             >
               Sign Up
             </button>
+            {
+              signUpStatus === 'loading' &&
+              <div className="ml-4 mb-4 text-sm text-green-500 font-bold">Processing...Please wait...</div>
+            }
+            {
+              signUpStatus === 'fulfilled' &&
+              <div className="ml-4 mb-4 text-sm text-green-500 font-bold">Successful...Process to login...</div>
+            }
+            {
+              signUpStatus === 'rejected' &&
+              <div className="ml-4 mb-4 text-sm text-red-500 font-bold">Signup failed...</div>
+            }
           </Form>
         )}
       </Formik>

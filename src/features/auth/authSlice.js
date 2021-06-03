@@ -4,7 +4,8 @@ import axios from 'axios';
 const initialState = {
   token: '',
   user: '',
-  status: ''
+  signInStatus: '',
+  signUpStatus: ''
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -89,13 +90,25 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(signInAsync.pending, (state) => {
-        state.status = 'loading';
+        state.signInStatus = 'loading';
       })
       .addCase(signInAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.signInStatus = 'fulfilled';
         state.token = action.payload.token;
         state.user = action.payload.user;
-      });
+      })
+      .addCase(signInAsync.rejected, (state) => {
+        state.signInStatus = 'rejected';
+      })
+      .addCase(signUpAsync.pending, (state) => {
+        state.signUpStatus = 'loading';
+      })
+      .addCase(signUpAsync.fulfilled, (state, action) => {
+        state.signUpStatus = 'fulfilled';
+      })
+      .addCase(signUpAsync.rejected, (state) => {
+        state.signUpStatus = 'rejected';
+      })
   },
 });
 
